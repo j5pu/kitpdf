@@ -2,7 +2,7 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-project = "pdfbox"
+project = "kitpdf"
 author = "José Antonio Puértolas Montañés"
 copyright = "2023, José Antonio Puértolas Montañés"
 extensions = [
@@ -19,7 +19,7 @@ autodoc_default_options = {"members": True, "member-order": "bysource",
                            "undoc-members": True, "show-inheritance": True}
 autodoc_typehints = "description"
 html_theme = "furo"
-html_title, html_last_updated_fmt = "pdfbox docs", "%Y-%m-%dT%H:%M:%S"
+html_title, html_last_updated_fmt = "kitpdf docs", "%Y-%m-%dT%H:%M:%S"
 inheritance_alias = {}
 nitpicky = True
 nitpick_ignore = [('py:class', '*')]
@@ -27,8 +27,8 @@ toc_object_entries = True
 toc_object_entries_show_parents = "all"
 pygments_style, pygments_dark_style = "sphinx", "monokai"
 extlinks = {
-    "issue": ("https://github.com/j5pu/pdfbox/issues/%s", "#%s"),
-    "pull": ("https://github.com/j5pu/pdfbox/pull/%s", "PR #%s"),
+    "issue": ("https://github.com/j5pu/kitpdf/issues/%s", "#%s"),
+    "pull": ("https://github.com/j5pu/kitpdf/pull/%s", "PR #%s"),
     "user": ("https://github.com/%s", "@%s"),
 }
 intersphinx_mapping = {

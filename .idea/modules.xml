@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/pdfbox.iml" filepath="$PROJECT_DIR$/.idea/pdfbox.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/kitpdf.iml" filepath="$PROJECT_DIR$/.idea/kitpdf.iml" />
     </modules>
   </component>
 </project>

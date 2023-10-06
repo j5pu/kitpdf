@@ -1,8 +1,8 @@
 # Reference
 
-## pdfbox
+## kitpdf
 
 ```{eval-rst}
-.. automodule:: pdfbox
+.. automodule:: kitpdf
    :members:
 ```

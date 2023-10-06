@@ -6,11 +6,11 @@ dependencies = [
     "PyMuPDF >= 1.23.3, <2",
     "pymupdf-fonts >= 1.0.5, <2",
 ]
-name = "pdfbox"
-description = "PDF helpers and utils"
 dynamic = ["version"]
 readme = "README.md"
 requires-python = ">=3.11"
+name = "kitpdf"
+description = "PDF helpers and utils"
 
 [project.optional-dependencies]
 dev = [
