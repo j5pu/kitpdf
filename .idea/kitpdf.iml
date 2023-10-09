@@ -10,7 +10,7 @@
       <excludeFolder url="file://$MODULE_DIR$/dist" />
       <excludeFolder url="file://$MODULE_DIR$/docs/_build" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.11 (pdfbox)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.11 (kitpdf)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PyDocumentationSettings">
