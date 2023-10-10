@@ -14,7 +14,7 @@ description = "PDF helpers and utils"
 
 [project.optional-dependencies]
 dev = [
-    "pproj[all]",
+    "nodeps[all,dev]",
 ]
 
 [[project.authors]]
