@@ -4,7 +4,6 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 project = "kitpdf"
 author = "José Antonio Puértolas Montañés"
-# noinspection PyShadowingBuiltins
 copyright = "2023, José Antonio Puértolas Montañés"
 extensions = [
     "myst_parser",
