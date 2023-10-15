@@ -303,32 +303,41 @@ def picture_paste(
         position: position of foreground image, if position is (0,0) background is resized to same size as forground
         stamp: True to stamp the foreground image
     """
-    if foreground is None:
-        return background
-
-    bg = Image.open(background).convert("RGBA")
-    fg = Image.open(foreground).convert("RGBA")
-
-    if stamp:
-        putalpha = False
-        x = random.randint(int(0.1 * bg.size[0]), int(0.7 * bg.size[0]))  # noqa: S311
-        y = random.randint(int(0.6 * bg.size[1]), int(0.85 * bg.size[1]))  # noqa: S311
-        puntos = Image.open(PDFBOX_DATA / "Puntos.png").convert("RGBA")
-        puntos = puntos.resize(fg.size, resample=Resampling.NEAREST)
-        puntos = puntos.rotate(random.randint(0, 180))  # noqa: S311
-        fg.paste(puntos, (0, 0), puntos)
-        fg = fg.resize(fg.size, resample=Resampling.NEAREST)
-        fg = fg.rotate(random.randint(8, 48), expand=True)  # noqa: S311
-        position = (x, y)
-
-    if position == (0, 0):
-        bg = bg.resize(fg.size)
-
     try:
-        if putalpha:
-            with putalpha_random(foreground) as fg:
-                f = Image.open(fg).convert("RGBA")
-                bg.paste(f, position, f)
+        if foreground is None:
+            yield background
+        else:
+            bg = Image.open(background).convert("RGBA")
+            fg = Image.open(foreground).convert("RGBA")
+
+            if stamp:
+                putalpha = False
+                x = random.randint(int(0.1 * bg.size[0]), int(0.7 * bg.size[0]))  # noqa: S311
+                y = random.randint(int(0.6 * bg.size[1]), int(0.85 * bg.size[1]))  # noqa: S311
+                puntos = Image.open(PDFBOX_DATA / "Puntos.png").convert("RGBA")
+                puntos = puntos.resize(fg.size, resample=Resampling.NEAREST)
+                puntos = puntos.rotate(random.randint(0, 180))  # noqa: S311
+                fg.paste(puntos, (0, 0), puntos)
+                fg = fg.resize(fg.size, resample=Resampling.NEAREST)
+                fg = fg.rotate(random.randint(8, 48), expand=True)  # noqa: S311
+                position = (x, y)
+
+            if position == (0, 0):
+                bg = bg.resize(fg.size)
+
+            if putalpha:
+                with putalpha_random(foreground) as fg:
+                    f = Image.open(fg).convert("RGBA")
+                    bg.paste(f, position, f)
+                    with tempfile.TemporaryDirectory() as tmpdir:
+                        tmp = Path(tmpdir) / "paste.png"
+                        bg.save(tmp, "PNG")
+                        if dest is None:
+                            yield tmp
+                        else:
+                            yield shutil.copy(tmp, dest)
+            else:
+                bg.paste(fg, position, fg)
                 with tempfile.TemporaryDirectory() as tmpdir:
                     tmp = Path(tmpdir) / "paste.png"
                     bg.save(tmp, "PNG")
@@ -336,15 +345,6 @@ def picture_paste(
                         yield tmp
                     else:
                         yield shutil.copy(tmp, dest)
-        else:
-            bg.paste(fg, position, fg)
-            with tempfile.TemporaryDirectory() as tmpdir:
-                tmp = Path(tmpdir) / "paste.png"
-                bg.save(tmp, "PNG")
-                if dest is None:
-                    yield tmp
-                else:
-                    yield shutil.copy(tmp, dest)
     finally:
         pass
 
