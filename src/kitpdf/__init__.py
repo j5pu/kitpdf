@@ -329,7 +329,7 @@ def picture_paste(
                 with putalpha_random(foreground) as fg:
                     f = Image.open(fg).convert("RGBA")
                     if not stamp:
-                        bg = bg.rotate(random.randint(0, 3), expand=True)  # noqa: S311
+                        bg = bg.rotate(random.randint(0, 3), expand=False)  # noqa: S311
                     bg.paste(f, position, f)
                     with tempfile.TemporaryDirectory() as tmpdir:
                         tmp = Path(tmpdir) / "paste.png"
