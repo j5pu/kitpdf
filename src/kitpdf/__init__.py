@@ -91,7 +91,7 @@ def pdf_linearize(file: Path | str) -> None:
 
 def pdf_reduce(
         path: Path | str,
-        level: Literal["/default", "/prepress", "ebook", "/screen"] = "/prepress",
+        level: Literal["/default", "/prepress", "ebook", "/screen"] = "/ebook",
         threshold: int | None = PDF_REDUCE_THRESHOLD,
 ) -> None:
     """Compress pdf.
@@ -241,7 +241,7 @@ def pdf_to_picture(source: AnyPath, dest: AnyPath | Literal["dir", "tmp"] = "dir
     try:
         with tempfile.TemporaryDirectory() as tmpdir:
             tmp = Path(tmpdir) / "tmp"
-            subprocess.run(["pdftoppm", f"-{fmt}", "-r", str(dpi), "-singlefile", source, tmp])
+            subprocess.check_call(["pdftoppm", f"-{fmt}", "-r", str(dpi), "-singlefile", source, tmp])
             suffix = f".{fmt}" if fmt == "png" else ".jpg"
             if not (tmp := tmp.with_suffix(suffix)).exists():
                 msg = f"File not found {tmp}"
@@ -264,7 +264,7 @@ def picture_paste(
         putalpha: bool = True,
         position: tuple[int, int] | tuple[int, int, int, int] | None = (0, 0),
         stamp: bool = False,
-):
+) -> Path:
     """Paste the foreground image on top of the background image.
 
     Examples:
@@ -360,7 +360,8 @@ def putalpha_random(source: AnyPath, dest: AnyPath = None, value: tuple[int, int
         >>> from kitpdf import PDFBOX_DATA_TESTS
         >>>
         >>> src = PDFBOX_DATA_TESTS / "BBVA.pdf"
-        >>> with putalpha_random(src, PDFBOX_DATA_TESTS / f"generated/BBVA-{putalpha_random.__name__}.png", ) as out:
+        >>> pic = PDFBOX_DATA_TESTS / f"generated/BBVA-{putalpha_random.__name__}.png"
+        >>> with (pdf_to_picture(src, dest=pic) as picture, putalpha_random(picture) as out):
         ...     assert out.exists()
         ...     assert out.suffix == ".png"
         >>> with (putalpha_random(src) as temp):
