@@ -11,6 +11,7 @@ __all__ = (
     "pdf_reduce",
     "pdf_scan",
     "pdf_to_picture",
+    "picture_paste",
     "putalpha_random",
     "white_alpha",
 )
