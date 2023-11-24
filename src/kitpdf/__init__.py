@@ -6,6 +6,7 @@ __all__ = (
     "SCAN_PREFIX",
     "exif_rm_tags",
     "exif_transform_date",
+    "linearized",
     "metadata",
     "pdf_diff",
     "pdf_from_picture",
@@ -96,6 +97,21 @@ def exif_transform_date(data: str | pikepdf.Object) -> datetime.datetime | str |
 
         return datetime.datetime(**date_info)  # noqa: DTZ001
     return data
+
+
+def linearized(file: Path | str) -> bool:
+    """Check if metadata Linearize if Yes.
+
+    Examples:
+        >>> import datetime
+        >>> from kitpdf import linearized, PDFBOX_DATA_TESTS
+        >>>
+        >>> assert linearized(PDFBOX_DATA_TESTS / "BBVA.pdf") is False
+
+    Args:
+        file: file to check linearize metadata
+    """
+    return metadata(file).get("Linearized", "No") == "Yes"
 
 
 def metadata(file: Path | str, slash: bool = False) -> dict[str, str | datetime.datetime]:
