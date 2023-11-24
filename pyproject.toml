@@ -1,9 +1,11 @@
 [project]
 dependencies = [
+    "python-dateutil >= 2.8.2, <3",
     "fonttools >= 4.42.1, <5",
     "matplotlib >= 3.8.0, <4",
     "nodeps",
     "pillow >= 10.0.0, <11",
+    "pikepdf >= 8.7.1, <9",
     "PyMuPDF >= 1.23.3, <2",
     "pymupdf-fonts >= 1.0.5, <2",
 ]

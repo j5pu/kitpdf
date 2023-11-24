@@ -5,6 +5,8 @@ __all__ = (
     "PDF_REDUCE_THRESHOLD",
     "SCAN_PREFIX",
     "exif_rm_tags",
+    "exif_transform_date",
+    "metadata",
     "pdf_diff",
     "pdf_from_picture",
     "pdf_linearize",
@@ -17,8 +19,10 @@ __all__ = (
 )
 
 import contextlib
+import datetime
 import difflib
 import random
+import re
 import shutil
 import subprocess
 import tempfile
@@ -27,6 +31,8 @@ from typing import Literal
 import fitz
 import nodeps
 import numpy as np
+import pikepdf
+from dateutil.tz import tzoffset, tzutc
 from nodeps import AnyPath, Path
 from PIL import Image
 from PIL.Image import Resampling
@@ -38,11 +44,85 @@ PDF_REDUCE_THRESHOLD = 2000000
 SCAN_PREFIX = "scanned_"
 
 
+pdf_date_pattern = re.compile("(D:)?(?P<year>\\d\\d\\d\\d)(?P<month>\\d\\d)(?P<day>\\d\\d)(?P<hour>\\d\\d)(?P<minute>"
+                              "\\d\\d)(?P<second>\\d\\d)(?P<tz_offset>[+-zZ])?(?P<tz_hour>"
+                              "\\d\\d)?'?(?P<tz_minute>\\d\\d)?'?")
+
+
 def exif_rm_tags(file: Path | str):
     """Removes tags with exiftool in pdf."""
     nodeps.which("exiftool", raises=True)
 
     subprocess.check_call(["exiftool", "-q", "-q", "-all=", "-overwrite_original", file])
+
+
+def exif_transform_date(data: str | pikepdf.Object) -> datetime.datetime | str | pikepdf.Object:
+    """Convert a pdf date such as "D:20120321183444+07'00'" into a usable datetime.
+
+    https://www.verypdf.com/pdfinfoeditor/pdf-date-format.htm
+    (D:YYYYMMDDHHmmSSOHH'mm')
+
+    Examples:
+        >>> from kitpdf import exif_transform_date
+        >>>
+        >>> exif_transform_date("D:20201002181301Z")
+        datetime.datetime(2020, 10, 2, 18, 13, 1, tzinfo=tzutc())
+
+    Args:
+        data: text to find match and convert.
+
+    Returns:
+        datetime.datetime or None if no match.
+    """
+    if isinstance(data, str) and (match := re.match(pdf_date_pattern, data)):
+        date_info = match.groupdict()
+
+        for k, v in date_info.items():  # transform values
+            if v is None:
+                pass
+            elif k == 'tz_offset':
+                date_info[k] = v.lower()  # so we can treat Z as z
+            else:
+                date_info[k] = int(v)
+
+        if date_info['tz_offset'] in ('z', None):  # UTC
+            date_info['tzinfo'] = tzutc()
+        else:
+            multiplier = 1 if date_info['tz_offset'] == '+' else -1
+            date_info['tzinfo'] = tzoffset(None, multiplier*(3600 * date_info['tz_hour'] + 60 * date_info['tz_minute']))
+
+        for k in ('tz_offset', 'tz_hour', 'tz_minute'):  # no longer needed
+            del date_info[k]
+
+        return datetime.datetime(**date_info)  # noqa: DTZ001
+    return data
+
+
+def metadata(file: Path | str, slash: bool = False) -> dict[str, str | datetime.datetime]:
+    """Returns file metadata.
+
+    Examples:
+        >>> import datetime
+        >>> from kitpdf import metadata, PDFBOX_DATA_TESTS
+        >>>
+        >>> meta = metadata(PDFBOX_DATA_TESTS / "BBVA.pdf")
+        >>> assert isinstance(meta["CreationDate"], datetime.datetime)
+        >>> assert meta["Author"] == "BBVA"
+
+    Args:
+        file: file to get metadata
+        slash: False default to remove start / and convert pikepdf.String to str.
+
+    Returns:
+        datetime.datetime or None if no match.
+
+    """
+    def _parse(data):
+        data = str(data) if isinstance(data, pikepdf.String) else data
+        return data.removeprefix("/") if slash is False and isinstance(data := exif_transform_date(data), str) else data
+
+    pdf = pikepdf.Pdf.open(file)
+    return {_parse(key): _parse(value) for key, value in pdf.docinfo.items()}
 
 
 def pdf_diff(file1: Path | str, file2: Path | str) -> list[bytes]:
