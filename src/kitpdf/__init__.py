@@ -8,8 +8,8 @@ __all__ = (
     "exif_transform_date",
     "linearized",
     "metadata",
-    "pdf_equal",
     "pdf_diff",
+    "pdf_equal",
     "pdf_from_picture",
     "pdf_linearize",
     "pdf_reduce",
@@ -143,6 +143,23 @@ def metadata(file: Path | str, slash: bool = False) -> dict[str, str | datetime.
     return {_parse(key): _parse(value) for key, value in pdf.docinfo.items()}
 
 
+def pdf_diff(file1: Path | str, file2: Path | str) -> list[bytes]:
+    """Show diffs of two pdfs.
+
+    Args:
+        file1: file 1
+        file2: file 2
+
+    Returns:
+        True if equals
+    """
+    return list(
+        difflib.diff_bytes(
+            difflib.unified_diff, Path(file1).read_bytes().splitlines(), Path(file2).read_bytes().splitlines(), n=1
+        )
+    )
+
+
 def pdf_equal(file1: Path | str, file2: Path | str) -> bool:
     """Checks if two pdfs files are visually equal.
 
@@ -159,24 +176,8 @@ def pdf_equal(file1: Path | str, file2: Path | str) -> bool:
     Returns:
         True if equals
     """
+    nodeps.which("diff-pdf", raises=True)
     return not bool(subprocess.run(["diff-pdf", file1, file2]).returncode)
-
-
-def pdf_diff(file1: Path | str, file2: Path | str) -> list[bytes]:
-    """Show diffs of two pdfs.
-
-    Args:
-        file1: file 1
-        file2: file 2
-
-    Returns:
-        True if equals
-    """
-    return list(
-        difflib.diff_bytes(
-            difflib.unified_diff, Path(file1).read_bytes().splitlines(), Path(file2).read_bytes().splitlines(), n=1
-        )
-    )
 
 
 def pdf_from_picture(file: Path | str, picture: Path | str, rm: bool = True) -> Path:

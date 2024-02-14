@@ -1,3 +1,4 @@
+brew "diff-pdf"
 brew "exiftool"
 brew "ghostscript"
 brew "imagemagick"
