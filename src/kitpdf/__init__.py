@@ -8,6 +8,7 @@ __all__ = (
     "exif_transform_date",
     "linearized",
     "metadata",
+    "pdf_equal",
     "pdf_diff",
     "pdf_from_picture",
     "pdf_linearize",
@@ -140,6 +141,25 @@ def metadata(file: Path | str, slash: bool = False) -> dict[str, str | datetime.
 
     pdf = pikepdf.Pdf.open(file)
     return {_parse(key): _parse(value) for key, value in pdf.docinfo.items()}
+
+
+def pdf_equal(file1: Path | str, file2: Path | str) -> bool:
+    """Checks if two pdfs files are visually equal.
+
+    Examples:
+        >>> from kitpdf import pdf_equal, PDFBOX_DATA_TESTS
+        >>>
+        >>> assert pdf_equal(PDFBOX_DATA_TESTS / "ing1.pdf", PDFBOX_DATA_TESTS / "ing2.pdf") is True
+        >>> assert pdf_equal(PDFBOX_DATA_TESTS / "ing1.pdf", PDFBOX_DATA_TESTS / "ing3.pdf") is False
+
+    Args:
+        file1: file 1
+        file2: file 2
+
+    Returns:
+        True if equals
+    """
+    return not bool(subprocess.run(["diff-pdf", file1, file2]).returncode)
 
 
 def pdf_diff(file1: Path | str, file2: Path | str) -> list[bytes]:
