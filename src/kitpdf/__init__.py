@@ -54,9 +54,8 @@ def exif_rm_tags(file: Path | str):
     """Removes tags with exiftool in pdf."""
     nodeps.which("exiftool", raises=True)
     nodeps.which("mat2", raises=True)
-    subprocess.run(["mat2", "--inplace", file])
-
     subprocess.check_call(["exiftool", "-q", "-q", "-all=", "-overwrite_original", file])
+    subprocess.run(["mat2", "--inplace", file])
 
 
 def exif_transform_date(data: str | pikepdf.Object) -> datetime.datetime | str | pikepdf.Object:
@@ -184,7 +183,7 @@ def pdf_linearize(file: Path | str) -> None:
 
     with tempfile.TemporaryDirectory() as tmpdir:
         tmp = Path(tmpdir) / "tmp.pdf"
-        subprocess.run(["qpdf", "--linearize", file, tmp])
+        subprocess.run(["qpdf", "--linearize", "--warning-exit-0", file, tmp])
         Path(tmp).replace(file)
 
 
