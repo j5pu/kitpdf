@@ -179,10 +179,8 @@ def pdf_from_picture(file: Path | str, picture: Path | str, rm: bool = True) -> 
 
 def pdf_linearize(file: Path | str) -> None:
     """Linearize pdf (overwrites original)."""
-    nodeps.which("qpdf")
-
-    with tempfile.TemporaryDirectory():
-        subprocess.run(["qpdf", "--linearize", "--warning-exit-0", "--no-original-object-ids", "--replace-input", file])
+    nodeps.which("qpdf", raises=True)
+    subprocess.run(["qpdf", "--linearize", "--warning-exit-0", "--no-original-object-ids", "--replace-input", file])
 
 
 def pdf_reduce(
