@@ -4,7 +4,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 project = "kitpdf"
 author = "José Antonio Puértolas Montañés"
-copyright = "2023, José Antonio Puértolas Montañés"
+copyright = "2024, José Antonio Puértolas Montañés"
 extensions = [
     "myst_parser",
     "sphinx.ext.autodoc",

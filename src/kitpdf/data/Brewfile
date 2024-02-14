@@ -1,6 +1,7 @@
 brew "exiftool"
 brew "ghostscript"
 brew "imagemagick"
+brew "mat2"
 brew "poppler"
 brew "qpdf"
 brew "tesseract"

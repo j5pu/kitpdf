@@ -53,6 +53,8 @@ pdf_date_pattern = re.compile("(D:)?(?P<year>\\d\\d\\d\\d)(?P<month>\\d\\d)(?P<d
 def exif_rm_tags(file: Path | str):
     """Removes tags with exiftool in pdf."""
     nodeps.which("exiftool", raises=True)
+    nodeps.which("mat2", raises=True)
+    subprocess.run(["mat2", "--inplace", file])
 
     subprocess.check_call(["exiftool", "-q", "-q", "-all=", "-overwrite_original", file])
 
