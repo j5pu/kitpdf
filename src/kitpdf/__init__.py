@@ -181,10 +181,8 @@ def pdf_linearize(file: Path | str) -> None:
     """Linearize pdf (overwrites original)."""
     nodeps.which("qpdf")
 
-    with tempfile.TemporaryDirectory() as tmpdir:
-        tmp = Path(tmpdir) / "tmp.pdf"
-        subprocess.run(["qpdf", "--linearize", "--warning-exit-0", file, tmp])
-        Path(tmp).replace(file)
+    with tempfile.TemporaryDirectory():
+        subprocess.run(["qpdf", "--linearize", "--warning-exit-0", "--no-original-object-ids", "--replace-input", file])
 
 
 def pdf_reduce(
