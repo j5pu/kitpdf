@@ -28,7 +28,7 @@ import re
 import shutil
 import subprocess
 import tempfile
-from typing import Literal
+from typing import Literal, LiteralString
 
 import fitz
 import nodeps
@@ -116,7 +116,9 @@ def linearized(file: Path | str) -> bool:
     return metadata(file).get("Linearized", "No") == "Yes"
 
 
-def metadata(file: Path | str, slash: bool = False) -> dict[str, str | datetime.datetime]:
+def metadata(file: Path | str, slash: bool = False) -> dict[
+    LiteralString | datetime.datetime | str | pikepdf.Object, LiteralString | datetime.datetime | str | pikepdf.Object
+]:
     """Returns file metadata.
 
     Examples:
@@ -426,6 +428,8 @@ def picture_paste(
     try:
         if foreground is None:
             yield background
+        elif background is None:
+            yield foreground
         else:
             bg = Image.open(background).convert("RGBA")
             fg = Image.open(foreground).convert("RGBA")
