@@ -253,7 +253,7 @@ def pdf_reduce(
                 [
                     "gs",
                     "-sDEVICE=pdfwrite",
-                    "-dCompatibilityLevel=1.4",
+                    "-dCompatibilityLevel=1.5",
                     f"-dPDFSETTINGS={level}",
                     "-dNOPAUSE",
                     "-dQUIET",

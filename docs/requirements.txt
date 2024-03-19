@@ -6,3 +6,4 @@ sphinx-autobuild >=2021.3.14, <2022
 sphinx-click >=5.0.1, <6
 sphinx_autodoc_typehints
 sphinxcontrib-napoleon >=0.7, <1
+typer[all] >= 0.9, <1
