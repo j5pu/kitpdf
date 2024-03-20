@@ -252,6 +252,7 @@ def pdf_reduce(
             subprocess.check_call(
                 [
                     "gs",
+                    "-dQUIET",
                     "-sDEVICE=pdfwrite",
                     "-dCompatibilityLevel=1.5",
                     f"-dPDFSETTINGS={level}",
